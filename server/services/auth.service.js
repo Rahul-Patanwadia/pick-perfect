@@ -1,13 +1,22 @@
+const {User} = require('../models/user')
 
-const helloService = async() =>{
+const createUser = async(email, password) =>{
     try{
-        return 'hello'
+
+        if(await User.emailTaken(email)){
+            console.log('Email already taken')
+            return;
+        }
+
+        const user = new User({email,password})
+        await user.save();
+        return user;
     }
     catch(error){
-
+        throw error
     }
 }
 
 module.exports = {
-    helloService
+    createUser
 }
