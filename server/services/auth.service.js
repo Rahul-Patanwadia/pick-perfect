@@ -1,11 +1,12 @@
 const {User} = require('../models/user')
+const httpStatus = require('http-status')
+const {ApiError} = require('../middleware/apiError')
 
 const createUser = async(email, password) =>{
     try{
 
         if(await User.emailTaken(email)){
-            console.log('Email already taken')
-            return;
+            throw new ApiError(httpStatus.BAD_REQUEST, 'Sorry email is taken')
         }
 
         const user = new User({email,password})
@@ -17,6 +18,11 @@ const createUser = async(email, password) =>{
     }
 }
 
+const genAuthToken = (user) => {
+    const token = user.generateAuthToken();
+    return token;
+}
+
 module.exports = {
-    createUser
+    createUser, genAuthToken
 }
