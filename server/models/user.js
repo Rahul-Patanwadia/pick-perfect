@@ -78,11 +78,16 @@ userSchema.pre('save',async function(next){
 })
 
 userSchema.methods.generateAuthToken = function(){
-    
     let user = this
     const userObj = { sub: user._id.toHexString()};
     const token = jwt.sign(userObj, process.env.DB_SECRET, {expiresIn:'1d'});
     return token;
+}
+
+userSchema.methods.comparePassword = async function(candidatePassword){
+    const user = this;
+    const match = await bcrypt.compare(candidatePassword,user.password);
+    return match;
 }
 
 const User = mongoose.model('User', userSchema)
